@@ -1,17 +1,69 @@
 const MD5 = require('crypto-js/md5');
 const fs = require('fs');
 
+// TODO: Implementar o crédito tb
+function readNubank(contentString) {
+	let lines = contentString.split("\n");
+	lines = lines.filter(item => item);
+
+	const dataArray = parseToDataObject(lines);
+	return dataArray;
+}
+
 // TODO: Implementar para o caso de repetição de pagamentos com o mesmo valor
 // Listar antes todos os items e ir analisando os casos repetidos e incrementando pra o hash ficar diferente
-function readInter() {
-	const data = fs.readFileSync('fatura-inter.csv', 'utf8');
+function readInter(filename) {
+	try {
+		const data = fs.readFileSync(filename, 'utf8');
+	} catch(err) {
+		console.error('Arquivo não encontrado');
+		return;
+	}
+
 	const headers = data.slice(0, data.indexOf("\n")).split(';');
 	let dataArray = data.split("\n");
 	dataArray = dataArray.slice(8, dataArray.length - 1);
 
+	const dataFormatted = parseToDataObject(dataArray);
+	// dataArray.forEach(item => {
+	// 	const [data, description, _type, value] = item.split(';');
+	// 	if (value.match(/-/)) return;
+
+	// 	const descriptionSanitized = description.replaceAll(/\s+$/g, '');
+	// 	const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
+
+	// 	dataFormatted.push({ data, description: descriptionSanitized, value: valueParsed });
+	// });
+
+	return dataFormatted;
+}
+
+function parseToDataObject(dataArray) {
+	if (dataArray.length === 0) throw new Error('Não possui faturas para exportação');
+
 	const dataFormatted = [];
 	dataArray.forEach(item => {
-		const [data, description, _type, value] = item.split(';');
+		const itemArray = item.split(';');
+
+		let date;
+		let description;
+		let value;
+
+		// Fatura do Inter
+		if (itemArray.length === 4) {
+			data = itemArray[0];
+			description = itemArray[1];
+			value = itemArray[3];
+		}
+
+		// Fatura do Nubank
+		if (itemArray.length === 3) {
+			data = nubankDateParser(itemArray[0]);
+
+			description = itemArray[1];
+			value = itemArray[2];
+		}
+
 		if (value.match(/-/)) return;
 
 		const descriptionSanitized = description.replaceAll(/\s+$/g, '');
@@ -23,6 +75,11 @@ function readInter() {
 	return dataFormatted;
 }
 
+function nubankDateParser(rawDateString) {
+	const currentYear = new Date().toDateString().match(/\d\d\d\d$/)[0]
+
+	return new Date(Date.parse(`${rawDateString} ${currentYear}`)).toLocaleDateString('pt-br');
+}
 
 function stringDateToOfxFormat(dateString) {
 	const [day, month, year] = dateString.split('/');
@@ -132,4 +189,5 @@ module.exports = {
 	buildXML,
 	stringDateToOfxFormat,
 	readInter,
+	readNubank,
 };
