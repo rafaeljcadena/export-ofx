@@ -15,27 +15,28 @@ function readNubank(contentString) {
 function readInter(filename) {
 	try {
 		const data = fs.readFileSync(filename, 'utf8');
+
+		const headers = data.slice(0, data.indexOf("\n")).split(';');
+		let dataArray = data.split("\n");
+		dataArray = dataArray.slice(8, dataArray.length - 1);
+
+		const dataFormatted = parseToDataObject(dataArray);
+		// dataArray.forEach(item => {
+		// 	const [data, description, _type, value] = item.split(';');
+		// 	if (value.match(/-/)) return;
+
+		// 	const descriptionSanitized = description.replaceAll(/\s+$/g, '');
+		// 	const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
+
+		// 	dataFormatted.push({ data, description: descriptionSanitized, value: valueParsed });
+		// });
+
+		return dataFormatted;
+
 	} catch(err) {
 		console.error('Arquivo não encontrado');
 		return;
 	}
-
-	const headers = data.slice(0, data.indexOf("\n")).split(';');
-	let dataArray = data.split("\n");
-	dataArray = dataArray.slice(8, dataArray.length - 1);
-
-	const dataFormatted = parseToDataObject(dataArray);
-	// dataArray.forEach(item => {
-	// 	const [data, description, _type, value] = item.split(';');
-	// 	if (value.match(/-/)) return;
-
-	// 	const descriptionSanitized = description.replaceAll(/\s+$/g, '');
-	// 	const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
-
-	// 	dataFormatted.push({ data, description: descriptionSanitized, value: valueParsed });
-	// });
-
-	return dataFormatted;
 }
 
 function parseToDataObject(dataArray) {
