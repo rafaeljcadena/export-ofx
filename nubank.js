@@ -1,7 +1,6 @@
 const { parseToDataObject, exportFile } = require('./utils.js');
 const { myArgs, stdin, stdout } = process;
 
-// TODO: Implementar o crédito tb
 function render() {
 	const lines = [];
 

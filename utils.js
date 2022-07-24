@@ -27,7 +27,10 @@ function parseToDataObject(dataArray) {
 			value = itemArray[2];
 		}
 
-		if (value.match(/-/)) return;
+		if (description.match(/Pagamento recebido/)) return;
+		if (description.match(/Pagto Debito Automat/)) return;
+
+		// if (value.match(/-/)) return;
 
 		const descriptionSanitized = description.replaceAll(/\s+$/g, '');
 		const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
@@ -106,12 +109,11 @@ NEWFILEUID:NONE
 	schema.push(`<DTEND>${endDateISO}`);
 
 	arrayObj.forEach(item => {
-		// arrayObj.push({ id: `${data}-${description}`, data, description, category, value });
 		const { data, description, value } = item;
 
 		schema.push(`
 <STMTTRN>
-	<TRNTYPE>DEBIT
+	<TRNTYPE>${value < 0 ? 'CREDIT' : 'DEBIT'}
 	<DTPOSTED>${stringDateToOfxFormat(data)}
 	<TRNAMT>${value}
 	<FITID>${MD5(`${data}-${description}`).toString()}
@@ -121,7 +123,6 @@ NEWFILEUID:NONE
 	});
 
 	schema.push('</BANKTRANLIST>');
-
 
 	const total = arrayObj.reduce((acc, item) => {
 		let floatValue = parseFloat(item.value);
