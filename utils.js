@@ -1,46 +1,10 @@
 const MD5 = require('crypto-js/md5');
 const fs = require('fs');
 
-// TODO: Implementar o crédito tb
-function readNubank(contentString) {
-	let lines = contentString.split("\n");
-	lines = lines.filter(item => item);
-
-	const dataArray = parseToDataObject(lines);
-	return dataArray;
-}
-
-// TODO: Implementar para o caso de repetição de pagamentos com o mesmo valor
-// Listar antes todos os items e ir analisando os casos repetidos e incrementando pra o hash ficar diferente
-function readInter(filename) {
-	try {
-		const data = fs.readFileSync(filename, 'utf8');
-
-		const headers = data.slice(0, data.indexOf("\n")).split(';');
-		let dataArray = data.split("\n");
-		dataArray = dataArray.slice(8, dataArray.length - 1);
-
-		const dataFormatted = parseToDataObject(dataArray);
-		// dataArray.forEach(item => {
-		// 	const [data, description, _type, value] = item.split(';');
-		// 	if (value.match(/-/)) return;
-
-		// 	const descriptionSanitized = description.replaceAll(/\s+$/g, '');
-		// 	const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
-
-		// 	dataFormatted.push({ data, description: descriptionSanitized, value: valueParsed });
-		// });
-
-		return dataFormatted;
-
-	} catch(err) {
-		console.error('Arquivo não encontrado');
-		return;
-	}
-}
-
 function parseToDataObject(dataArray) {
 	if (dataArray.length === 0) throw new Error('Não possui faturas para exportação');
+
+	const { bank } = process.myArgs;
 
 	const dataFormatted = [];
 	dataArray.forEach(item => {
@@ -50,15 +14,13 @@ function parseToDataObject(dataArray) {
 		let description;
 		let value;
 
-		// Fatura do Inter
-		if (itemArray.length === 4) {
+		if (bank === 'inter') {
 			data = itemArray[0];
 			description = itemArray[1];
 			value = itemArray[3];
 		}
 
-		// Fatura do Nubank
-		if (itemArray.length === 3) {
+		if (bank === 'nubank') {
 			data = nubankDateParser(itemArray[0]);
 
 			description = itemArray[1];
@@ -186,9 +148,22 @@ NEWFILEUID:NONE
 	return schema;
 }
 
+function exportFile(arrayObj, bank) {
+  let schema;
+
+  if (arrayObj) schema = buildXML(arrayObj);
+  if (!schema) return;
+
+  fs.writeFile(`${bank}_${new Date().toLocaleString('pt-br').split(' ')[0].replaceAll('/','-')}.ofx`, schema.join(''), function (err) {
+    if (err) throw err;
+    console.log('Exportado com sucesso!');
+  });
+
+}
+
 module.exports = {
 	buildXML,
 	stringDateToOfxFormat,
-	readInter,
-	readNubank,
+	parseToDataObject,
+	exportFile,
 };
