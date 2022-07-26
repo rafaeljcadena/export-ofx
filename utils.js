@@ -10,7 +10,7 @@ function parseToDataObject(dataArray) {
 	dataArray.forEach(item => {
 		const itemArray = item.split(';');
 
-		let date;
+		let data;
 		let description;
 		let value;
 
@@ -35,7 +35,10 @@ function parseToDataObject(dataArray) {
 		const descriptionSanitized = description.replaceAll(/\s+$/g, '');
 		const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
 
-		dataFormatted.push({ data, description: descriptionSanitized, value: valueParsed });
+		const repeatedDataCount = dataFormatted.filter(d => d.data === data && d.description === descriptionSanitized && d.value === valueParsed).length;
+		const repeatedSuffix = repeatedDataCount > 0 ? `-${repeatedDataCount}` : '';
+
+		dataFormatted.push({ data, description: descriptionSanitized + repeatedSuffix, value: valueParsed });
 	});
 
 	return dataFormatted;
