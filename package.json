@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "inter": "node main.js bank=inter file=Fatura.csv",
+    "nubank": "node main.js bank=nubank"
   },
   "keywords": [],
   "author": "",
