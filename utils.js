@@ -45,9 +45,10 @@ function parseToDataObject(dataArray) {
 }
 
 function nubankDateParser(rawDateString) {
-	const currentYear = new Date().toDateString().match(/\d\d\d\d$/)[0]
+	const currentYear = new Date().toDateString().match(/\d\d\d\d$/)[0];
+	const rawDateTranslated = monthTranslation(rawDateString);
 
-	return new Date(Date.parse(`${rawDateString} ${currentYear}`)).toLocaleDateString('pt-br');
+	return new Date(Date.parse(`${rawDateTranslated} ${currentYear}`)).toLocaleDateString('pt-br');
 }
 
 function stringDateToOfxFormat(dateString) {
@@ -56,6 +57,13 @@ function stringDateToOfxFormat(dateString) {
 	return new Date(`${month}-${day}-${year}`).toISOString().split('T')[0].replaceAll('-', '') + '000000[-3:GMT]';
 }
 
+function monthTranslation(rawDate) {
+	if (rawDate.match(/AGO/)) return rawDate.replace('AGO', 'AUG');
+	if (rawDate.match(/SET/)) return rawDate.replace('SET', 'SEP');
+	if (rawDate.match(/OUT/)) return rawDate.replace('OUT', 'OCT');
+
+	if (rawDate.match(/DEZ/)) return rawDate.replace('DEZ', 'DEC');
+}
 
 function buildXML(arrayObj) {
 	const startDateISO = new Date().toISOString().split('T')[0].replaceAll('-', '') + '000000[-3:GMT]';
