@@ -13,15 +13,17 @@ function render() {
 	});
 
 	rl.on('line', function(line){
-		if (line.match(/^\d\d\s[A-z]{3}$/)) line = "\n" + line.replace(/\n/, '') + ';'
-
 		lines.push(line);
 		if (line) return;
 
-		let formattedLines = lines.join("").replace(/\t/g, ';')
+		let formattedLines = [];
+		for(var i = 2; i < lines.length; i = i + 3) {
+			const date = lines[i - 2];
+			const desc = lines[i - 1];
+			const value = lines[i];
 
-		formattedLines = formattedLines.split("\n");
-		formattedLines = formattedLines.filter(item => item);
+			formattedLines.push(`${date};${desc};${value}`);
+		}
 
 		const dataArray = parseToDataObject(formattedLines);
 		exportFile(dataArray, myArgs.bank);

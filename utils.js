@@ -32,6 +32,8 @@ function parseToDataObject(dataArray) {
 
 		// if (value.match(/-/)) return;
 
+		if (!data || !description || !value) throw new Error(`Item inconsistente:  ${JSON.stringify(itemArray)}`)
+
 		const descriptionSanitized = description.replaceAll(/\s+$/g, '');
 		const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
 
@@ -46,7 +48,7 @@ function parseToDataObject(dataArray) {
 
 function nubankDateParser(rawDateString) {
 	const currentYear = new Date().toDateString().match(/\d\d\d\d$/)[0];
-	const rawDateTranslated = monthTranslation(rawDateString);
+	const rawDateTranslated = monthTranslation(rawDateString.toUpperCase());
 
 	return new Date(Date.parse(`${rawDateTranslated} ${currentYear}`)).toLocaleDateString('pt-br');
 }
