@@ -63,8 +63,9 @@ function monthTranslation(rawDate) {
 	if (rawDate.match(/AGO/)) return rawDate.replace('AGO', 'AUG');
 	if (rawDate.match(/SET/)) return rawDate.replace('SET', 'SEP');
 	if (rawDate.match(/OUT/)) return rawDate.replace('OUT', 'OCT');
-
 	if (rawDate.match(/DEZ/)) return rawDate.replace('DEZ', 'DEC');
+
+	return rawDate;
 }
 
 function buildXML(arrayObj) {
