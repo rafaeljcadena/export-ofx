@@ -60,6 +60,7 @@ function stringDateToOfxFormat(dateString) {
 }
 
 function monthTranslation(rawDate) {
+	if (rawDate.match(/FEV/)) return rawDate.replace('FEV', 'FEB');
 	if (rawDate.match(/AGO/)) return rawDate.replace('AGO', 'AUG');
 	if (rawDate.match(/SET/)) return rawDate.replace('SET', 'SEP');
 	if (rawDate.match(/OUT/)) return rawDate.replace('OUT', 'OCT');
