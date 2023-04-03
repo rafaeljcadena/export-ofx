@@ -1,4 +1,6 @@
 const bills = document.querySelectorAll('.charge.ng-scope');
+if (bills.length === 0) throw new Error('Elements not founded in this page');
+
 const list = [];
 
 let csvContent = "data:text/csv;charset=utf-8,";
