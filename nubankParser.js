@@ -1,5 +1,5 @@
-bills = document.querySelectorAll('.charge.ng-scope');
-list = [];
+const bills = document.querySelectorAll('.charge.ng-scope');
+const list = [];
 
 let csvContent = "data:text/csv;charset=utf-8,";
 
@@ -15,6 +15,6 @@ list.forEach(item => {
    csvContent += item + "\n"
 });
 
-encodedUri = encodeURI(csvContent);
+const encodedUri = encodeURI(csvContent);
 window.open(encodedUri);
 
