@@ -34,9 +34,11 @@ function parseToDataObject(dataArray) {
 
 		if (!data || !description || !value) throw new Error(`Item inconsistente:  ${JSON.stringify(itemArray)}`)
 
+		// Ajusta a informação do custo
 		const descriptionSanitized = description.replaceAll(/\s+$/g, '');
 		const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
 
+		// Resolve o problema de débitos da mesma empresa com o mesmo valor e no mesmo dia
 		const repeatedDataCount = dataFormatted.filter(d => d.data === data && d.description === descriptionSanitized && d.value === valueParsed).length;
 		const repeatedSuffix = repeatedDataCount > 0 ? `-${repeatedDataCount}` : '';
 
@@ -61,6 +63,8 @@ function stringDateToOfxFormat(dateString) {
 
 function monthTranslation(rawDate) {
 	if (rawDate.match(/FEV/)) return rawDate.replace('FEV', 'FEB');
+	if (rawDate.match(/ABR/)) return rawDate.replace('ABR', 'APR');
+	if (rawDate.match(/MAI/)) return rawDate.replace('MAI', 'MAY');
 	if (rawDate.match(/AGO/)) return rawDate.replace('AGO', 'AUG');
 	if (rawDate.match(/SET/)) return rawDate.replace('SET', 'SEP');
 	if (rawDate.match(/OUT/)) return rawDate.replace('OUT', 'OCT');
@@ -71,6 +75,9 @@ function monthTranslation(rawDate) {
 
 function buildXML(arrayObj) {
 	const startDateISO = new Date().toISOString().split('T')[0].replaceAll('-', '') + '000000[-3:GMT]';
+
+	console.log({ arrayObj });
+
 	const endDateISO = stringDateToOfxFormat(arrayObj[arrayObj.length - 1].data);
 
 	let schema = [];
