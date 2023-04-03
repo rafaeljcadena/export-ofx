@@ -16,5 +16,14 @@ list.forEach(item => {
 });
 
 const encodedUri = encodeURI(csvContent);
-window.open(encodedUri);
 
+const link = document.createElement("a");
+link.setAttribute("href", encodedUri);
+
+const filename = `nubank_${new Intl.DateTimeFormat('pt-BR', {month: 'long'}).format()}.csv`;
+
+link.setAttribute("download", filename);
+document.body.appendChild(link);
+link.click();
+
+link.remove();
