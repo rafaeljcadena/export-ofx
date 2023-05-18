@@ -1,16 +1,26 @@
-const bills = document.querySelectorAll('.charge.ng-scope');
+const bills = document.querySelectorAll("tr[tabindex='0']");
 if (bills.length === 0) throw new Error('Elements not founded in this page');
 
 const list = [];
 
 let csvContent = "data:text/csv;charset=utf-8,";
 
+let fallbackDate;
 bills.forEach((item) => {
-	const date = item.querySelector('.cell .date').innerText;
-	const description = item.querySelector('.charge-data .description').innerText;
-	const price = item.querySelector('.charge-data .amount').innerText;
+	const dateColumn = item.querySelector("td:nth-child(1) p");
 
-	list.push(`${date};${description};${price}`);
+	let dateValue;
+	if (dateColumn) {
+		dateValue = dateColumn.innerText;
+		fallbackDate = dateColumn.innerText;
+	} else {
+		dateValue = fallbackDate;
+	}
+
+	const description = item.querySelector("td:nth-child(4) div p").innerText;
+	const price = item.querySelector("td:nth-child(5) div div p").innerText;
+
+	list.push(`${dateValue};${description};${price}`);
 });
 
 list.forEach(item => {
