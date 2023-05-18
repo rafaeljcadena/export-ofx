@@ -36,7 +36,7 @@ function parseToDataObject(dataArray) {
 
 		// Ajusta a informação do custo
 		const descriptionSanitized = description.replaceAll(/\s+$/g, '');
-		const valueParsed = parseFloat(value.replace('.', '').replace(',', '.'));
+		const valueParsed = parseFloat(value.replace('R$', '').replace('.', '').replace(',', '.'));
 
 		// Resolve o problema de débitos da mesma empresa com o mesmo valor e no mesmo dia
 		const repeatedDataCount = dataFormatted.filter(d => d.data === data && d.description === descriptionSanitized && d.value === valueParsed).length;
